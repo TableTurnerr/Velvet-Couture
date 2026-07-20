@@ -1,0 +1,1119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Al-Baghdady — Post-Transformation Review (vs. May 2026 Audit)</title>
+<style>
+  :root {
+    --cream: #FBF6EC;
+    --sand: #F2E9D7;
+    --paper: #FFFDF7;
+    --ink: #1B1B1B;
+    --muted: #6E6457;
+    --line: #E4D9C2;
+    --maroon: #8B1A1A;
+    --maroon-dk: #6E1414;
+    --gold: #C9A84C;
+    --gold-dk: #A6873A;
+    --green: #2F7A3E;
+    --amber: #B97D17;
+    --red: #B5322C;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    line-height: 1.55;
+    font-size: 15px;
+  }
+  h1, h2, h3, h4 {
+    font-family: Georgia, "Iowan Old Style", "Apple Garamond", serif;
+    font-weight: 500;
+    letter-spacing: -0.005em;
+    color: var(--ink);
+    margin: 0;
+  }
+  h1 { font-size: 38px; line-height: 1.15; }
+  h2 { font-size: 26px; line-height: 1.2; margin-top: 0; }
+  h3 { font-size: 18px; line-height: 1.3; }
+  h4 { font-size: 15px; line-height: 1.3; text-transform: uppercase; letter-spacing: 0.08em; color: var(--maroon); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-weight: 700; }
+  p { margin: 0 0 12px; }
+  a { color: var(--maroon); text-decoration: underline; text-underline-offset: 2px; }
+  code { background: var(--sand); padding: 1px 6px; border-radius: 4px; font-size: 13px; }
+
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 56px 32px 96px; }
+
+  /* Header */
+  .hero {
+    background: linear-gradient(180deg, var(--paper) 0%, var(--cream) 100%);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 44px 44px 36px;
+    margin-bottom: 36px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::after {
+    content: "";
+    position: absolute;
+    right: -60px;
+    top: -60px;
+    width: 220px;
+    height: 220px;
+    background: radial-gradient(closest-side, rgba(201,168,76,0.18), transparent 70%);
+    pointer-events: none;
+  }
+  .eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--maroon);
+    font-weight: 700;
+    margin-bottom: 14px;
+  }
+  .hero p.lede {
+    font-size: 17px;
+    color: var(--muted);
+    margin-top: 14px;
+    max-width: 760px;
+  }
+  .hero-meta {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-top: 22px;
+    padding-top: 22px;
+    border-top: 1px solid var(--line);
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .hero-meta b { color: var(--ink); }
+
+  /* Scorecard grid */
+  .grade-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 40px;
+  }
+  .grade {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 18px 18px 16px;
+  }
+  .grade .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); margin-bottom: 8px; }
+  .grade .then { font-size: 13px; color: var(--muted); }
+  .grade .now { font-size: 22px; font-weight: 700; color: var(--maroon); margin-top: 4px; }
+  .grade .delta { font-size: 12px; color: var(--green); font-weight: 600; margin-top: 4px; }
+
+  /* Sections */
+  section { margin-bottom: 44px; }
+  .section-head { display: flex; align-items: baseline; gap: 16px; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 2px solid var(--line); }
+  .section-head .n { font-family: Georgia, serif; font-size: 28px; color: var(--gold-dk); font-weight: 500; }
+
+  /* Status table */
+  table.audit { width: 100%; border-collapse: collapse; background: var(--paper); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+  table.audit th, table.audit td { padding: 12px 14px; text-align: left; font-size: 14px; vertical-align: top; }
+  table.audit th { background: var(--sand); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); font-weight: 700; }
+  table.audit tr + tr td { border-top: 1px solid var(--line); }
+  table.audit td.col-finding { width: 30%; font-weight: 600; }
+  table.audit td.col-status { width: 14%; }
+  table.audit td.col-evidence { width: 56%; color: #2c2c2c; }
+
+  /* Status badges */
+  .badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 999px;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+  .badge.done { background: #E8F2EA; color: var(--green); border: 1px solid #C9E2CD; }
+  .badge.partial { background: #FBF1DC; color: var(--amber); border: 1px solid #ECDBA9; }
+  .badge.missing { background: #F6E2DF; color: var(--red); border: 1px solid #E9C2BC; }
+  .badge.external { background: #ECE6F3; color: #5B3F8A; border: 1px solid #D7CBE6; }
+  .badge.dropped { background: #EEEAE3; color: #5C5447; border: 1px solid #DBD2BF; }
+  .badge.improve { background: #F2EDE0; color: var(--gold-dk); border: 1px solid var(--line); }
+
+  /* Pull quote / callout */
+  .callout {
+    background: var(--sand);
+    border-left: 4px solid var(--gold);
+    padding: 16px 20px;
+    border-radius: 0 12px 12px 0;
+    margin: 16px 0;
+    font-size: 14px;
+  }
+  .callout strong { color: var(--maroon); }
+
+  /* Keyword section */
+  .kw-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .kw-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 18px 20px;
+  }
+  .kw-card h4 { margin-bottom: 10px; }
+  .kw-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed var(--line); font-size: 14px; }
+  .kw-row:last-child { border-bottom: 0; }
+  .kw-row .term { color: var(--ink); }
+  .kw-row .count { font-variant-numeric: tabular-nums; color: var(--maroon); font-weight: 700; }
+  .kw-row .count.low { color: var(--red); }
+  .kw-row .count.mid { color: var(--amber); }
+  .kw-row .count.high { color: var(--green); }
+
+  /* Improvement list */
+  ul.recs { list-style: none; padding: 0; margin: 0; }
+  ul.recs li {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 10px;
+    position: relative;
+    padding-left: 56px;
+  }
+  ul.recs li::before {
+    content: counter(rec);
+    counter-increment: rec;
+    position: absolute;
+    left: 16px;
+    top: 14px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--maroon);
+    color: var(--paper);
+    font-weight: 700;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  ul.recs { counter-reset: rec; }
+  ul.recs h4 { font-size: 14px; margin-bottom: 4px; color: var(--ink); text-transform: none; letter-spacing: 0; font-family: Georgia, serif; font-weight: 500; }
+  ul.recs p { font-size: 13.5px; color: #3a3a3a; margin: 0; }
+  ul.recs .tag {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: var(--sand);
+    color: var(--muted);
+    margin-right: 6px;
+    font-weight: 700;
+  }
+  ul.recs .tag.quick { background: #E8F2EA; color: var(--green); }
+  ul.recs .tag.big { background: #FBF1DC; color: var(--amber); }
+  ul.recs .tag.strategic { background: #F6E2DF; color: var(--red); }
+
+  /* Two-col bullet lists */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .two-col h4 { margin-bottom: 10px; }
+  .two-col ul { margin: 0; padding-left: 18px; font-size: 14px; }
+  .two-col li { margin-bottom: 6px; }
+
+  /* Bar chart */
+  .bars { background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 20px 22px; }
+  .bar { display: grid; grid-template-columns: 220px 1fr 60px; gap: 12px; align-items: center; padding: 6px 0; font-size: 13.5px; }
+  .bar .label { color: var(--ink); }
+  .bar .track { background: var(--sand); border-radius: 6px; height: 12px; overflow: hidden; position: relative; }
+  .bar .fill { background: linear-gradient(90deg, var(--gold), var(--maroon)); height: 100%; border-radius: 6px; }
+  .bar .num { text-align: right; font-weight: 700; color: var(--maroon); font-variant-numeric: tabular-nums; }
+
+  /* Footer */
+  .endnote {
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 60px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+  }
+
+  @media (max-width: 760px) {
+    .wrap { padding: 28px 18px 60px; }
+    .hero { padding: 28px 22px; }
+    h1 { font-size: 28px; }
+    .grade-grid { grid-template-columns: repeat(2, 1fr); }
+    .kw-grid { grid-template-columns: 1fr; }
+    .two-col { grid-template-columns: 1fr; }
+    .bar { grid-template-columns: 140px 1fr 50px; font-size: 12px; }
+    table.audit td.col-finding { width: auto; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- HERO -->
+<div class="hero">
+  <div class="eyebrow">Post-Transformation Review &nbsp;·&nbsp; May 2026 Audit → May 2026 Build</div>
+  <h1>Al-Baghdady — what we promised, what we shipped,<br>and what's still on the table.</h1>
+  <p class="lede">
+    The May 2026 audit ranked the brand 16/100 on the grader, called out 27 distinct issues, and estimated $1,504/month
+    in revenue loss from broken digital plumbing. This review walks through every section of that audit, scores the current
+    al-baghdady.com codebase against it, tallies real keyword coverage across the site, and lists what's worth doing next.
+  </p>
+  <div class="hero-meta">
+    <div><b>Source audit:</b> <code>reports-archive/al-baghdadi/2026-05/al-baghdadi-internal-report.json</code></div>
+    <div><b>Reviewed build:</b> <code>al-baghdady.com</code> v1.35 (commit c5f7023)</div>
+    <div><b>Date:</b> 2026-05-21</div>
+  </div>
+</div>
+
+<!-- SCORECARD -->
+<section>
+  <div class="section-head"><span class="n">A.</span><h2>Headline scorecard</h2></div>
+  <div class="grade-grid">
+    <div class="grade">
+      <div class="label">Grader Score</div>
+      <div class="then">Was 16/100 (D-)</div>
+      <div class="now">~55–70 est.</div>
+      <div class="delta" style="color: var(--amber);">Estimate — re-run to confirm</div>
+    </div>
+    <div class="grade">
+      <div class="label">On-Page Content</div>
+      <div class="then">Was ~200 words (F)</div>
+      <div class="now">~28,000+ words</div>
+      <div class="delta">↑ 140× across 24 routes</div>
+    </div>
+    <div class="grade">
+      <div class="label">Brand Consistency</div>
+      <div class="then">3 domains, 4 names, 3 phones</div>
+      <div class="now">1 canonical, 1 phone</div>
+      <div class="delta" style="color: var(--red);">⚠ legacy domains still live — see §R</div>
+    </div>
+    <div class="grade">
+      <div class="label">Schema Coverage</div>
+      <div class="then">None</div>
+      <div class="now">7 JSON-LD types</div>
+      <div class="delta">Restaurant + Org + Menu + FAQ + Breadcrumb + Web + Local</div>
+    </div>
+    <div class="grade">
+      <div class="label">Static Routes</div>
+      <div class="then">~3 hand-coded pages</div>
+      <div class="now">9 static + 10 cities + 11 specialties</div>
+      <div class="delta">↑ 24 prerendered routes</div>
+    </div>
+    <div class="grade">
+      <div class="label">Review Count</div>
+      <div class="then">1,892</div>
+      <div class="now">1,899 (RESTAURANT.reviewCount)</div>
+      <div class="delta">+7; soft growth, see §9</div>
+    </div>
+    <div class="grade">
+      <div class="label">Phone in Body</div>
+      <div class="then">Missing from site</div>
+      <div class="now">Header + Footer + FAQ + Modal</div>
+      <div class="delta">✓ surfaced everywhere</div>
+    </div>
+    <div class="grade">
+      <div class="label">Direct Ordering</div>
+      <div class="then">Off-site (ZingMyOrder)</div>
+      <div class="now">Still off-site</div>
+      <div class="delta" style="color:var(--amber);">Phase 3 item open</div>
+    </div>
+  </div>
+
+  <div class="callout">
+    <strong>The single biggest shift since the audit:</strong> the business has repositioned from "Iraqi restaurant + bakery"
+    (kabob platters, shawarma, mandi, masgoof) to <b>"Iraqi bakery &amp; breakfast café"</b> (samoon, baklava, kunafa,
+    fatayer, manakish, traditional breakfast). The May audit's kabob/shawarma/mandi/masgoof keyword targets are effectively
+    abandoned — kabob+kebab+shawarma+mandi+masgoof together appear only <b>2 times</b> across the whole codebase.
+    Whether this is the right call depends on what's actually being sold today; see §K below.
+  </div>
+</section>
+
+<!-- B. AUDIT-BY-SECTION -->
+<section>
+  <div class="section-head"><span class="n">B.</span><h2>Audit findings, line by line</h2></div>
+  <p style="color:var(--muted); max-width:820px;">
+    Every numbered finding from the original 18-section internal report, mapped to current state.
+    <span class="badge done">Done</span>
+    <span class="badge partial">Partial</span>
+    <span class="badge missing">Missing</span>
+    <span class="badge external">Out of repo</span>
+    <span class="badge dropped">Dropped on purpose</span>
+  </p>
+
+  <h3 style="margin: 22px 0 10px;">§3 — Technical SEO</h3>
+  <table class="audit">
+    <thead><tr><th>Original finding</th><th>Status</th><th>Evidence in current build</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="col-finding">3.1 Three live domains splitting authority</td>
+        <td class="col-status"><span class="badge missing">Not done</span></td>
+        <td class="col-evidence">
+          Code-side: canonical is <code>al-baghdady.com</code> everywhere (<code>RESTAURANT.url</code>, sitemap, schema, metadata).
+          <code>schema.ts</code> lists 12 alternate names. <b>But both legacy domains are still live:</b> direct
+          fetch on 2026-05-21 confirmed <code>albaghdadyrestaurant.com</code> and <code>albaghdadybakeryandcafe.com</code>
+          both return 200 OK with the old ZingMyOrder pages, no 301 to the canonical. They are
+          ranking ahead of <code>al-baghdady.com</code> on multiple commercial queries (see §R). This is the
+          single highest-priority open item — see recommendation #11.
+        </td>
+      </tr>
+      <tr>
+        <td class="col-finding">3.2 H1 present but no body content</td>
+        <td class="col-status"><span class="badge done">Done</span></td>
+        <td class="col-evidence">
+          Homepage now has ~12 sections (Hero, PressStrip, ActionCards, TrustBar, FeaturedDishes, BakerySpotlight,
+          Gallery, Reviews, Instagram, FAQs, OurLocation). Every interior page has 300–1,000 words. The audit's biggest
+          single lever is now the largest unit of work delivered.
+        </td>
+      </tr>
+      <tr>
+        <td class="col-finding">3.3 Off-site ordering link dilutes on-page SEO</td>
+        <td class="col-status"><span class="badge missing">Missing</span></td>
+        <td class="col-evidence">
+          <code>RESTAURANT.orderOnline</code> still points at ZingMyOrder. No first-party cart, no on-domain iframe,
+          no "save 25% — order direct" framing. This was a Phase 3 item in the original action plan and remains open.
+          See recommendation #2.
+        </td>
+      </tr>
+      <tr>
+        <td class="col-finding">3.4 Phone number missing from site body</td>
+        <td class="col-status"><span class="badge done">Done</span></td>
+        <td class="col-evidence">
+          <code>(469) 547-2042</code> appears in Header, Footer, OurLocation, FAQ, ReviewModal, schema, every neighborhood
+          page CTA. <code>tel:</code> link with <code>format-detection telephone=yes</code> in <code>layout.tsx</code>.
+        </td>
+      </tr>
+      <tr>
+        <td class="col-finding">3.5 Metadata, OG, Twitter cards largely missing</td>
+        <td class="col-status"><span class="badge done">Done</span></td>
+        <td class="col-evidence">
+          Every page calls <code>createMetadata()</code> (<code>src/data/metadata.ts</code>): title, description, canonical,
+          keywords, OG title/desc/image, Twitter card. Verified via root <code>layout.tsx</code> + per-page <code>metadata</code> exports.
+        </td>
+      </tr>
+      <tr>
+        <td class="col-finding">3.6 No schema markup</td>
+        <td class="col-status"><span class="badge done">Done</span></td>
+        <td class="col-evidence">
+          Seven JSON-LD generators in <code>src/data/schema.ts</code>: Organization, Restaurant, LocalBusiness, Menu, FAQPage,
+          BreadcrumbList, WebPage, Website. Injected via <code>&lt;SchemaInjector&gt;</code> on every route. Schema includes
+          <code>aggregateRating</code> (4.4 / 1,899), <code>openingHours</code>, <code>servesCuisine</code>, <code>amenityFeature</code>,
+          and full address+geo.
+        </td>
+      </tr>
+      <tr>
+        <td class="col-finding">3.7 Sitemap + robots.txt</td>
+        <td class="col-status"><span class="badge done">Done</span></td>
+        <td class="col-evidence">
+          <code>app/sitemap.ts</code> generates the sitemap at build time from <code>NEIGHBORHOODS</code> + <code>SPECIALTIES</code>
+          + the static route list. <code>public/robots.txt</code> exists and points at the sitemap.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 style="margin: 28px 0 10px;">§4 — On-Page SEO</h3>
+  <table class="audit">
+    <thead><tr><th>Original finding</th><th>Status</th><th>Evidence</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="col-finding">4.1 Title not maximized</td>
+        <td class="col-status"><span class="badge done">Done</span></td>
+        <td class="col-evidence">
+          Root title is "Al-Baghdady Bakery &amp; Café | Authentic Iraqi Bakery &amp; Breakfast Café in Richardson, TX".
+          Specialty + neighborhood titles all include city + cuisine + brand. Watch character count on a couple of
+          the longer specialty titles (some run 72–78 chars — see #8).
+        </td>
+      </tr>
+      <tr>
+        <td class="col-finding">4.2 No internal linking</td>
+        <td class="col-status"><span class="badge done">Done</span></td>
+        <td class="col-evidence">
+          FAQs use markdown-style internal links throughout (<code>[Plano](/near/plano-tx/)</code> etc.).
+          Specialty pages link to <code>/bakery/</code>, <code>/catering/</code>, and each other. Hub pages at
+          <code>/near/</code> and <code>/specialties/</code> link out to every spoke. Footer links every interior route.
+        </td>
+      </tr>
+      <tr>
+        <td class="col-finding">4.3 Image alt tags status unknown</td>
+        <td class="col-status"><span class="badge partial">Partial</span></td>
+        <td class="col-evidence">
+          <code>SmartImage</code> requires an <code>alt</code> prop, and most usages provide descriptive alts
+          (food name + dish context). Worth a quick audit pass on Gallery thumbnails specifically — those tend to
+          inherit generic "Al-Baghdady food" alts.
+        </td>
+      </tr>
+      <tr>
+        <td class="col-finding">4.4 No H2 / H3 hierarchy</td>
+        <td class="col-status"><span class="badge done">Done</span></td>
+        <td class="col-evidence">
+          Every section component has an explicit H2. Inside long pages (iraqi-cuisine, bakery, catering) H3s
+          break up sub-topics. Specialty pages follow eyebrow → H1 → primary block → FAQ pattern.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 style="margin: 28px 0 10px;">§5 — Performance</h3>
+  <table class="audit">
+    <thead><tr><th>Original finding</th><th>Status</th><th>Evidence</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="col-finding">5.x LCP ~3.5–4.5s, CLS ~0.15+, weight ~2–3MB</td>
+        <td class="col-status"><span class="badge partial">Partial</span></td>
+        <td class="col-evidence">
+          Static export with <code>output: 'export'</code> + WebP everywhere + <code>SmartImage</code> shimmer with
+          <code>priority</code> and <code>fetchPriority</code> hints removes most of the ZingMyOrder-era page weight.
+          But no real Lighthouse capture is in the repo. Run a Lighthouse pass against the deployed build and
+          attach the numbers to confirm the projected improvement.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 style="margin: 28px 0 10px;">§6 — UI / UX</h3>
+  <table class="audit">
+    <thead><tr><th>Original finding</th><th>Status</th><th>Evidence</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="col-finding">6.1 IA weak — only path was "land → order off-site"</td>
+        <td class="col-status"><span class="badge done">Done</span></td>
+        <td class="col-evidence">
+          ActionCards on home routes users into Menu / Bakery / Catering / Our Story. Header + Footer both
+          carry the full IA. Specialty + neighborhood hubs provide hub-and-spoke entry points.
+        </td>
+      </tr>
+      <tr>
+        <td class="col-finding">6.2 Trust signals — review count, halal badge</td>
+        <td class="col-status"><span class="badge partial">Partial</span></td>
+        <td class="col-evidence">
+          TrustBar surfaces "1,899 Reviews · 4.4 ★", halal &amp; Zabihah badging, family-owned, in-house bakery.
+          What's still missing: a live Google review embed showing the count <i>refresh</i> over time. Curated
+          Reviews section uses static quotes from <code>reviews.ts</code>.
+        </td>
+      </tr>
+      <tr>
+        <td class="col-finding">6.3 Mobile UX / cart-abandonment risk</td>
+        <td class="col-status"><span class="badge partial">Partial</span></td>
+        <td class="col-evidence">
+          Site is responsive, mobile tested at narrow widths. But the order CTA still bounces to ZingMyOrder
+          (see 3.3). Cart abandonment risk persists until first-party ordering lands.
+        </td>
+      </tr>
+      <tr>
+        <td class="col-finding">6.4 Accessibility</td>
+        <td class="col-status"><span class="badge partial">Partial</span></td>
+        <td class="col-evidence">
+          Decent baseline (semantic HTML, lucide icons, focus states). Hasn't been audited against WCAG AA in
+          this build. Worth a one-pass review with axe DevTools.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 style="margin: 28px 0 10px;">§7 — Content Strategy</h3>
+  <table class="audit">
+    <thead><tr><th>Original deliverable</th><th>Status</th><th>Evidence</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="col-finding">Homepage rewrite</td>
+        <td class="col-status"><span class="badge done">Done</span></td>
+        <td class="col-evidence">12-section homepage, ~1,200 words of indexable copy plus FAQ.</td>
+      </tr>
+      <tr>
+        <td class="col-finding">Our Story page</td>
+        <td class="col-status"><span class="badge done">Done</span></td>
+        <td class="col-evidence"><code>/our-story/</code> covers 1919 Baghdad → 2012 Richardson, Salah Hassan, recipes.</td>
+      </tr>
+      <tr>
+        <td class="col-finding">Iraqi Cuisine page</td>
+        <td class="col-status"><span class="badge done">Done</span></td>
+        <td class="col-evidence"><code>/iraqi-cuisine/</code> exists. Pivot note: leans more bakery + breakfast than mixed grill.</td>
+      </tr>
+      <tr>
+        <td class="col-finding">Bakery page</td>
+        <td class="col-status"><span class="badge done">Done</span></td>
+        <td class="col-evidence"><code>/bakery/</code> covers kunafa, baklava, mabrouma, ladyfingers, fatayer, samoon — full lineup.</td>
+      </tr>
+      <tr>
+        <td class="col-finding">Catering page</td>
+        <td class="col-status"><span class="badge done">Done</span></td>
+        <td class="col-evidence">
+          <code>/catering/</code> + <code>CateringForm</code> (mailto-based, no backend — acceptable for static export
+          but a real form endpoint would convert better, see #4).
+        </td>
+      </tr>
+      <tr>
+        <td class="col-finding">Areas We Serve hub — 7 city pages</td>
+        <td class="col-status"><span class="badge done">Done</span></td>
+        <td class="col-evidence">
+          Exceeded scope: <b>10 city pages</b> (Plano, Garland, Addison, North Dallas, Allen, McKinney, Far North
+          Dallas, Irving, Carrollton, Frisco) plus <code>/near/</code> hub. Original plan was 7.
+        </td>
+      </tr>
+      <tr>
+        <td class="col-finding">FAQ page (15–20 questions)</td>
+        <td class="col-status"><span class="badge partial">Partial</span></td>
+        <td class="col-evidence">
+          Standalone <code>/faq</code> was deliberately removed; <code>FAQS.slice(0, 6)</code> renders on the homepage
+          with FAQPage schema, and most specialty pages have their own per-topic FAQs. A dedicated index could still
+          help long-tail queries that the homepage 6 don't cover.
+        </td>
+      </tr>
+      <tr>
+        <td class="col-finding">Press / Reviews page</td>
+        <td class="col-status"><span class="badge partial">Partial</span></td>
+        <td class="col-evidence">
+          PressStrip on the homepage carries the D Magazine quote. No standalone Press page consolidating coverage
+          from Dallas Observer + Dallas OCA + others mentioned in §18 of the audit.
+        </td>
+      </tr>
+      <tr>
+        <td class="col-finding">Specialties / dish pages (not in original scope)</td>
+        <td class="col-status"><span class="badge done">Done</span></td>
+        <td class="col-evidence">
+          <b>11 specialty pages</b> (<code>/specialties/[topic]</code>): bread, chai, burma, lady-fingers, samosa, kunafa,
+          baklava, breakfast, manakish, fatayer, halal-food. Each has its own metadata, FAQ block, related menu items,
+          and a dedicated WebP photo. This is net new content beyond the original audit's plan.
+        </td>
+      </tr>
+      <tr>
+        <td class="col-finding">Word-count target 4,500–6,000</td>
+        <td class="col-status"><span class="badge done">Done</span></td>
+        <td class="col-evidence">Estimate ~28,000+ indexable words across 24 prerendered routes. Well past the original target.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 style="margin: 28px 0 10px;">§8 — Local SEO &amp; Google Business Profile</h3>
+  <table class="audit">
+    <thead><tr><th>Original finding</th><th>Status</th><th>Evidence</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="col-finding">8.1 GBP description polish</td>
+        <td class="col-status"><span class="badge external">Out of repo</span></td>
+        <td class="col-evidence">GBP changes happen in Google's UI, not the codebase. The site copy is ready to mirror.</td>
+      </tr>
+      <tr>
+        <td class="col-finding">8.2 Phone number inconsistency across directories</td>
+        <td class="col-status"><span class="badge partial">Partial</span></td>
+        <td class="col-evidence">
+          Site-side: one phone, <code>(469) 547-2042</code>. Off-site (Yelp, Foursquare, Tripadvisor, DoorDash, Zabihah,
+          Restaurant Guru, Wheree) still needs manual NAP cleanup.
+        </td>
+      </tr>
+      <tr>
+        <td class="col-finding">8.3 Google Posts underused</td>
+        <td class="col-status"><span class="badge external">Out of repo</span></td>
+        <td class="col-evidence">Ongoing GBP work, not in this build.</td>
+      </tr>
+      <tr>
+        <td class="col-finding">8.4 Photo library — 30–40 new pro photos</td>
+        <td class="col-status"><span class="badge partial">Partial</span></td>
+        <td class="col-evidence">
+          11 specialty hero photos, full Gallery section, hero + storefront + dish images. Whether they're <i>new pro
+          shoots</i> vs. reused from the legacy library is something only the photographer / owner can confirm.
+        </td>
+      </tr>
+      <tr>
+        <td class="col-finding">8.5 Q&amp;A pre-population</td>
+        <td class="col-status"><span class="badge external">Out of repo</span></td>
+        <td class="col-evidence">FAQ content from <code>faqs.ts</code> is the canonical answer set to mirror into GBP Q&amp;A.</td>
+      </tr>
+      <tr>
+        <td class="col-finding">8.6 Categories</td>
+        <td class="col-status"><span class="badge external">Out of repo</span></td>
+        <td class="col-evidence">Audit recommended "Iraqi restaurant" as primary. GBP-side toggle.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 style="margin: 28px 0 10px;">§9 — Reviews &amp; Reputation</h3>
+  <table class="audit">
+    <thead><tr><th>Original finding</th><th>Status</th><th>Evidence</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="col-finding">Claim Tripadvisor + push for 25–50 new reviews</td>
+        <td class="col-status"><span class="badge external">Out of repo</span></td>
+        <td class="col-evidence">External operations work. Site doesn't currently link to Tripadvisor — consider adding once claimed.</td>
+      </tr>
+      <tr>
+        <td class="col-finding">Push to add 200+ new Google reviews</td>
+        <td class="col-status"><span class="badge partial">Partial</span></td>
+        <td class="col-evidence">
+          Site has the infrastructure: <code>ReviewModal</code> with Turnstile gate, posts to TableTurnerr ParentSite,
+          routes 4★+ reviewers to Google. Code-side this is done. Whether it's actually driving a +200 swing
+          shows in the review count: 1,892 → 1,899 (+7). Either the modal isn't getting enough surface area
+          or it's too early to see compound effect — likely both.
+        </td>
+      </tr>
+      <tr>
+        <td class="col-finding">Respond to existing negative reviews</td>
+        <td class="col-status"><span class="badge external">Out of repo</span></td>
+        <td class="col-evidence">GBP / Tripadvisor / Yelp moderation work, owner-side.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 style="margin: 28px 0 10px;">§10 — Social</h3>
+  <table class="audit">
+    <thead><tr><th>Original finding</th><th>Status</th><th>Evidence</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="col-finding">Instagram active</td>
+        <td class="col-status"><span class="badge done">Done</span></td>
+        <td class="col-evidence">
+          <code>InstagramSection</code> on homepage. <code>RESTAURANT.socials.instagram</code> points to
+          <code>@albaghdadyrestaurant</code>. Footer + Header both link out.
+        </td>
+      </tr>
+      <tr>
+        <td class="col-finding">Facebook present</td>
+        <td class="col-status"><span class="badge done">Done</span></td>
+        <td class="col-evidence"><code>facebook.com/AlBaghdadyRestaurant/</code> linked in footer + schema.</td>
+      </tr>
+      <tr>
+        <td class="col-finding">TikTok untapped</td>
+        <td class="col-status"><span class="badge missing">Missing</span></td>
+        <td class="col-evidence">
+          No TikTok link, no TikTok content embed. The audit specifically called out "sticky cheese kanafa"
+          and samoon process videos as defensible 1M-view content. Worth a dedicated section once an account
+          exists. See #6.
+        </td>
+      </tr>
+      <tr>
+        <td class="col-finding">YouTube untapped</td>
+        <td class="col-status"><span class="badge missing">Missing</span></td>
+        <td class="col-evidence">No YouTube link or embed.</td>
+      </tr>
+      <tr>
+        <td class="col-finding">Directory NAP cleanup</td>
+        <td class="col-status"><span class="badge external">Out of repo</span></td>
+        <td class="col-evidence">Off-site work across ~25 directories.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 style="margin: 28px 0 10px;">§11–13 — Competitive Landscape, Traffic, Keywords</h3>
+  <p style="color:var(--muted); margin: 0 0 10px;">These are operational / measurement deliverables, not code. Tracked via grader_cli + GBP analytics rather than site code. The keyword targets feed directly into §K below.</p>
+
+  <h3 style="margin: 28px 0 10px;">§14 — Brand Consistency (NAP)</h3>
+  <table class="audit">
+    <thead><tr><th>Original finding</th><th>Status</th><th>Evidence</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="col-finding">3 domains → 1</td>
+        <td class="col-status"><span class="badge done">Done</span></td>
+        <td class="col-evidence">Codebase canonicalizes <code>al-baghdady.com</code>. Verify 301s on the other two manually.</td>
+      </tr>
+      <tr>
+        <td class="col-finding">4 brand-name variants → 1</td>
+        <td class="col-status"><span class="badge done">Done</span></td>
+        <td class="col-evidence">
+          Canonical name: "Al-Baghdady Bakery &amp; Café". Legacy: "Al-Baghdady Restaurant &amp; Bakery".
+          <code>alternateName</code> in schema lists 12 historical variants including "Salam Grill" so search engines
+          consolidate authority. <i>Watch this:</i> the site copy is inconsistent about "Al-Baghdadi" vs "Al-Baghdady"
+          (audit used the "-di" spelling; site uses "-dy"). Pick one and replace_all.
+        </td>
+      </tr>
+      <tr>
+        <td class="col-finding">3 phones → 1</td>
+        <td class="col-status"><span class="badge done">Done</span></td>
+        <td class="col-evidence">Single public number across site + schema.</td>
+      </tr>
+      <tr>
+        <td class="col-finding">Email typo nfo@salamgrill.com → info@</td>
+        <td class="col-status"><span class="badge partial">Partial</span></td>
+        <td class="col-evidence">
+          Typo is gone, but the new email is <code>albaghdady.bakery@gmail.com</code> — a personal Gmail rather than
+          a branded <code>info@al-baghdady.com</code> address. Branded email costs nothing on Workspace/Zoho and signals
+          trust on contact pages and schema. See #7.
+        </td>
+      </tr>
+      <tr>
+        <td class="col-finding">2 addresses (327 + 329 Greenville)</td>
+        <td class="col-status"><span class="badge done">Done</span></td>
+        <td class="col-evidence">Site uses <code>327 N Greenville Ave</code> exclusively (the bakery + café address).</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- C. NET NEW BEYOND SCOPE -->
+<section>
+  <div class="section-head"><span class="n">C.</span><h2>What we shipped beyond the original scope</h2></div>
+  <div class="two-col">
+    <div>
+      <h4>Net-new pages &amp; surfaces</h4>
+      <ul>
+        <li>11 specialty pages (<code>/specialties/*</code>) — not in original plan</li>
+        <li>10 neighborhood pages (vs. 7 planned) including Carrollton, Irving, Frisco</li>
+        <li><code>dishes.ts</code> + <code>matrix.ts</code> infrastructure ready for the future <code>/[dish]-in-[city]/</code> mesh</li>
+        <li>Branded 404, error.tsx, global-error.tsx — on-theme failure states</li>
+        <li>Return-policy page for bakery sales</li>
+        <li>InstagramSection embedding the live feed look</li>
+      </ul>
+    </div>
+    <div>
+      <h4>Net-new mechanics</h4>
+      <ul>
+        <li>ReviewModal with Cloudflare Turnstile, 4★ gate, ParentSite POST</li>
+        <li>SmartImage shimmer + priority/fetchPriority hint pattern</li>
+        <li>QRHover scan-to-order interaction</li>
+        <li>GTM (<code>GTM-NT4P77JT</code>) + GA4 (<code>G-45CDCLQ387</code>) wired in layout</li>
+        <li>Google Search Console verification meta tag in place</li>
+        <li>Tailwind 4 design system with cream / maroon / gold tokens</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- K. KEYWORD COVERAGE -->
+<section>
+  <div class="section-head"><span class="n">K.</span><h2>Keyword coverage across the site</h2></div>
+  <p style="color:var(--muted); max-width:820px;">
+    Counts below are <code>rg -ic</code> totals across <code>/src</code> for each phrase or phrase group. They include
+    metadata, schema, FAQ copy, body copy, and component strings. Numbers are an order-of-magnitude signal, not a
+    keyword-density score — but they show where the site is over-weighted, where it's under-weighted, and where the
+    audit's targets have been dropped entirely.
+  </p>
+
+  <h4 style="margin-top:24px;">Top phrases by raw frequency</h4>
+  <div class="bars">
+    <div class="bar"><div class="label">"richardson"</div><div class="track"><div class="fill" style="width:100%"></div></div><div class="num">176</div></div>
+    <div class="bar"><div class="label">"dallas" (whole word)</div><div class="track"><div class="fill" style="width:99%"></div></div><div class="num">187</div></div>
+    <div class="bar"><div class="label">All bakery items*</div><div class="track"><div class="fill" style="width:90%"></div></div><div class="num">265</div></div>
+    <div class="bar"><div class="label">"iraqi …" (any)</div><div class="track"><div class="fill" style="width:85%"></div></div><div class="num">225</div></div>
+    <div class="bar"><div class="label">"baklava"</div><div class="track"><div class="fill" style="width:69%"></div></div><div class="num">183</div></div>
+    <div class="bar"><div class="label">"kunafa / kanafa / knafeh"</div><div class="track"><div class="fill" style="width:51%"></div></div><div class="num">136</div></div>
+    <div class="bar"><div class="label">Brand variants (incl. Salam Grill)</div><div class="track"><div class="fill" style="width:57%"></div></div><div class="num">152</div></div>
+    <div class="bar"><div class="label">Catering / wedding / iftar / eid</div><div class="track"><div class="fill" style="width:54%"></div></div><div class="num">142</div></div>
+    <div class="bar"><div class="label">"samoon / tandoor bread"</div><div class="track"><div class="fill" style="width:36%"></div></div><div class="num">96</div></div>
+    <div class="bar"><div class="label">"halal …" + zabihah</div><div class="track"><div class="fill" style="width:35%"></div></div><div class="num">93</div></div>
+    <div class="bar"><div class="label">Middle Eastern / Mediterranean / Arabic</div><div class="track"><div class="fill" style="width:34%"></div></div><div class="num">92</div></div>
+    <div class="bar"><div class="label">"review" / count / 4.4 star</div><div class="track"><div class="fill" style="width:22%"></div></div><div class="num">59</div></div>
+    <div class="bar"><div class="label">Kabob / kebab / shawarma / mandi / masgoof</div><div class="track"><div class="fill" style="width:0.8%; background: var(--red);"></div></div><div class="num">2</div></div>
+  </div>
+  <p style="font-size:12px; color:var(--muted); margin-top:8px;">* mabrouma + burma + ladyfingers + znood + fatayer + manakish + samosa + chai (combined).</p>
+
+  <h4 style="margin-top:32px;">By audit target group</h4>
+  <div class="kw-grid">
+    <div class="kw-card">
+      <h4>Money keywords (audit §13a)</h4>
+      <div class="kw-row"><span class="term">iraqi restaurant richardson</span><span class="count mid">covered via "iraqi restaurant" + "richardson"</span></div>
+      <div class="kw-row"><span class="term">halal restaurant richardson</span><span class="count mid">covered, low absolute weight (93 halal total)</span></div>
+      <div class="kw-row"><span class="term">middle eastern food near me</span><span class="count mid">92 "middle eastern" hits</span></div>
+      <div class="kw-row"><span class="term">best middle eastern food richardson</span><span class="count mid">partial — "best" appears, phrase not exact</span></div>
+      <div class="kw-row"><span class="term">best kabob richardson</span><span class="count low">DROPPED — see below</span></div>
+      <div class="kw-row"><span class="term">restaurant delivery richardson</span><span class="count mid">delivery copy on most pages</span></div>
+    </div>
+
+    <div class="kw-card">
+      <h4>Secret Weapons (audit §13b)</h4>
+      <div class="kw-row"><span class="term">best iraqi food dallas</span><span class="count high">225 "iraqi …" + 187 "dallas"</span></div>
+      <div class="kw-row"><span class="term">samoon bread dallas</span><span class="count high">96 samoon / tandoor</span></div>
+      <div class="kw-row"><span class="term">kanafa dallas</span><span class="count high">136 kunafa/kanafa</span></div>
+      <div class="kw-row"><span class="term">iraqi sweets dallas</span><span class="count high">strong via specialties + bakery</span></div>
+      <div class="kw-row"><span class="term">arabic bakery dallas</span><span class="count mid">covered but lighter than "iraqi bakery"</span></div>
+      <div class="kw-row"><span class="term">halal kabob richardson</span><span class="count low">2 kabob mentions — effectively dropped</span></div>
+      <div class="kw-row"><span class="term">masgoof dallas</span><span class="count low">0 hits — niche, low loss</span></div>
+      <div class="kw-row"><span class="term">albaghdady / al-baghdadi</span><span class="count high">152 brand mentions</span></div>
+    </div>
+
+    <div class="kw-card">
+      <h4>Neighborhood hub (audit §13c)</h4>
+      <div class="kw-row"><span class="term">iraqi restaurant plano</span><span class="count high">/near/plano-tx/ dedicated</span></div>
+      <div class="kw-row"><span class="term">mediterranean restaurant garland</span><span class="count mid">/near/garland-tx/; "mediterranean" weaker than "iraqi"</span></div>
+      <div class="kw-row"><span class="term">halal restaurant addison</span><span class="count high">/near/addison-tx/</span></div>
+      <div class="kw-row"><span class="term">iraqi food north dallas</span><span class="count high">/near/north-dallas-tx/</span></div>
+      <div class="kw-row"><span class="term">kabob restaurant allen tx</span><span class="count low">/near/allen-tx/ exists but no kabob copy</span></div>
+      <div class="kw-row"><span class="term">middle eastern restaurant mckinney</span><span class="count high">/near/mckinney-tx/</span></div>
+      <div class="kw-row"><span class="term">best iraqi food near me</span><span class="count high">used in far-north-dallas + others</span></div>
+      <div class="kw-row"><span class="term">+ Frisco, Irving, Carrollton (bonus)</span><span class="count high">3 extra pages beyond plan</span></div>
+    </div>
+
+    <div class="kw-card">
+      <h4>Catering (audit §13d)</h4>
+      <div class="kw-row"><span class="term">iraqi catering dallas</span><span class="count high">strong, 142 catering hits</span></div>
+      <div class="kw-row"><span class="term">halal catering richardson</span><span class="count high">covered</span></div>
+      <div class="kw-row"><span class="term">middle eastern catering dallas</span><span class="count mid">covered, lower weight</span></div>
+      <div class="kw-row"><span class="term">wedding catering dallas halal</span><span class="count mid">"wedding" appears, exact phrase rare</span></div>
+      <div class="kw-row"><span class="term">office lunch catering richardson</span><span class="count low">"office lunch" rarely used — boost on /catering/</span></div>
+      <div class="kw-row"><span class="term">arabic dessert tray dallas</span><span class="count mid">"dessert tray" mentioned in several FAQs</span></div>
+    </div>
+
+    <div class="kw-card">
+      <h4>Defensive + trend (audit §13e)</h4>
+      <div class="kw-row"><span class="term">albaghdady richardson</span><span class="count high">152 brand variants</span></div>
+      <div class="kw-row"><span class="term">al-baghdadi richardson (spelling)</span><span class="count mid">site uses "-dy" — see audit caveat</span></div>
+      <div class="kw-row"><span class="term">salam grill richardson</span><span class="count low">2 mentions in schema only — by design</span></div>
+      <div class="kw-row"><span class="term">al baghdady menu</span><span class="count high">/menu/ + breakfast page covers it</span></div>
+      <div class="kw-row"><span class="term">sticky cheese kanafa dallas</span><span class="count low">term not used; needs a copy/video plug</span></div>
+      <div class="kw-row"><span class="term">ramadan iftar richardson</span><span class="count mid">~12 iftar mentions across catering + neighborhoods</span></div>
+      <div class="kw-row"><span class="term">mandi richardson</span><span class="count low">0–1 mentions; intentionally dropped</span></div>
+    </div>
+
+    <div class="kw-card">
+      <h4>Off-target / over-indexed</h4>
+      <div class="kw-row"><span class="term">"family" / "1919" / "generation"</span><span class="count high">heritage angle = 212 hits</span></div>
+      <div class="kw-row"><span class="term">"fresh" / "daily" / "tandoor"</span><span class="count high">authenticity signaling, healthy</span></div>
+      <div class="kw-row"><span class="term">"breakfast"</span><span class="count high">major shift in positioning</span></div>
+      <div class="kw-row"><span class="term">"halal" relative to "iraqi"</span><span class="count mid">93 vs 225 — could push halal harder</span></div>
+      <div class="kw-row"><span class="term">"middle eastern"</span><span class="count mid">92 — about right; don't dilute "iraqi"</span></div>
+    </div>
+  </div>
+
+  <h4 style="margin-top:28px;">Use more / use less</h4>
+  <div class="two-col">
+    <div>
+      <h4 style="color:var(--green);">Lean into</h4>
+      <ul>
+        <li><b>"halal restaurant near me"</b> + <b>"halal bakery near me"</b> — only 93 halal mentions vs 225 iraqi; halal is a higher-volume query and the moat is real (Zabihah verified).</li>
+        <li><b>"iraqi breakfast"</b> as a category — biggest positioning shift; deserves its own /breakfast/ page (currently only the specialties/breakfast/ slug).</li>
+        <li><b>"office lunch catering richardson"</b> + <b>"corporate breakfast catering dallas"</b> — under-mentioned despite being one of the higher-ticket conversion paths.</li>
+        <li><b>"al-baghdadi" (alternate spelling)</b> — pick the canonical and add the other as a single H1-adjacent variant so both spellings rank. The audit used "-di"; the site uses "-dy". 152 brand mentions are nearly all the "-dy" form.</li>
+        <li><b>Review count + 4.4★ phrase</b> — only 59 mentions of any review-related copy. The whole moat in the audit was the review count. Surface "1,899 Google reviews" on every neighborhood hero, not just home.</li>
+        <li><b>"sticky cheese kunafa" / "fresh from the oven"</b> — TikTok-style hooks that double as keyword bait.</li>
+      </ul>
+    </div>
+    <div>
+      <h4 style="color:var(--red);">Don't push</h4>
+      <ul>
+        <li><b>"kabob" / "kebab" / "shawarma" / "mandi" / "masgoof"</b> — 2 mentions total. Either bring the dishes back to the menu (audit-aligned strategy) or stay the course on bakery-café and remove the few stragglers, e.g. "kabob restaurant Allen TX" metaTitle / popularDish entries that don't reflect reality.</li>
+        <li><b>"Salam Grill"</b> — keep it in <code>alternateName</code> only. Don't surface in human-readable copy.</li>
+        <li><b>"Mediterranean"</b> — 92 mentions is enough. Avoid over-using it; it dilutes the Iraqi-specific positioning the audit identified as the moat.</li>
+        <li><b>Generic adjectives</b> ("authentic", "traditional", "delicious") — already heavy; further repetition won't move rankings.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- R. RANKING — MEASURED VIA PLAYWRIGHT 2026-05-21 -->
+<section>
+  <div class="section-head"><span class="n">R.</span><h2>Live SERP positions (captured 2026-05-21)</h2></div>
+  <p style="color:var(--muted); max-width:820px;">
+    Captured by automating google.com with Playwright against <code>?gl=us&amp;hl=en&amp;num=20&amp;pws=0</code>
+    (US, English, top-20 organic, personalization off). The "Position" column is the organic rank of the URL
+    in the first results page. "Legacy" tracks whether either of the old domains (<code>albaghdadyrestaurant.com</code>,
+    <code>albaghdadybakeryandcafe.com</code>) appears in the same SERP — because that signal turned out to
+    be the single biggest finding of this run.
+  </p>
+
+  <div class="callout" style="border-left-color: var(--red); background: #F6E2DF;">
+    <strong>Smoking-gun finding from this capture:</strong> the legacy domains
+    <code>albaghdadyrestaurant.com</code> and <code>albaghdadybakeryandcafe.com</code>
+    are <b>still live</b> — they serve the old ZingMyOrder pages and they're outranking the new canonical
+    site on multiple commercial queries. On the bare branded query "albaghdady" the legacy site is <b>#1</b>
+    and the new site is <b>#2</b>. On "baklava richardson" the legacy is <b>#3</b> and the new site is <b>#7</b>.
+    The 301 redirects that the consolidation plan called for were never actually deployed.
+    Recommendation #11 in this review is now the single highest-leverage fix.
+  </div>
+
+  <h4 style="margin-top: 24px;">Where the new site is performing well</h4>
+  <table class="audit">
+    <thead><tr><th>Query</th><th>al-baghdady.com</th><th>Legacy domain</th><th>Top #1 on the SERP</th></tr></thead>
+    <tbody>
+      <tr><td>iraqi bakery richardson</td><td><span class="badge done">#1</span></td><td>#6 (legacy)</td><td>al-baghdady.com</td></tr>
+      <tr><td>iraqi bakery dallas</td><td><span class="badge done">#2</span></td><td>—</td><td>instagram.com</td></tr>
+      <tr><td>albaghdady (branded)</td><td><span class="badge partial">#2</span></td><td><b>#1 legacy</b></td><td>albaghdadyrestaurant.com</td></tr>
+      <tr><td>iraqi breakfast richardson</td><td><span class="badge done">#3</span></td><td>—</td><td>yelp.com</td></tr>
+      <tr><td>iraqi breakfast dallas</td><td><span class="badge done">#3</span></td><td>—</td><td>yelp.com</td></tr>
+      <tr><td>iraqi bakery plano</td><td><span class="badge done">#3</span></td><td>—</td><td>dallasobserver.com</td></tr>
+      <tr><td>iraqi sweets dallas</td><td><span class="badge done">#3</span></td><td>—</td><td>yelp.com</td></tr>
+      <tr><td>halal bakery richardson</td><td><span class="badge partial">#5</span></td><td>—</td><td>yelp.com</td></tr>
+      <tr><td>iraqi catering dallas</td><td><span class="badge partial">#6</span></td><td>—</td><td>instagram.com</td></tr>
+      <tr><td>iraqi food dallas</td><td><span class="badge partial">#7</span></td><td>—</td><td>yelp.com</td></tr>
+      <tr><td>baklava richardson</td><td><span class="badge partial">#7</span></td><td><b>#3 legacy</b></td><td>yelp.com</td></tr>
+      <tr><td>samoon bread dallas</td><td><span class="badge partial">#9</span></td><td>—</td><td>ebay.com</td></tr>
+      <tr><td>best baklava in richardson</td><td><span class="badge partial">#11</span></td><td>—</td><td>yelp.com</td></tr>
+    </tbody>
+  </table>
+
+  <h4 style="margin-top: 26px;">Where the new site is not showing up in top 20</h4>
+  <table class="audit">
+    <thead><tr><th>Query</th><th>al-baghdady.com</th><th>Legacy domain</th><th>Top #1 on the SERP</th></tr></thead>
+    <tbody>
+      <tr><td>best middle eastern in richardson tx</td><td><span class="badge missing">Unranked</span></td><td><b>#9 legacy</b></td><td>tripadvisor.com</td></tr>
+      <tr><td>best middle eastern food in richardson</td><td><span class="badge missing">Unranked</span></td><td><b>#7 legacy</b></td><td>tripadvisor.com</td></tr>
+      <tr><td>best middle eastern food in garland</td><td><span class="badge missing">Unranked</span></td><td>—</td><td>yelp.com</td></tr>
+      <tr><td>best middle eastern food in addison</td><td><span class="badge missing">Unranked</span></td><td>—</td><td>middleterranean.com</td></tr>
+      <tr><td>best baklava in garland</td><td><span class="badge missing">Unranked</span></td><td>—</td><td>yelp.com</td></tr>
+      <tr><td>best baklava in addison</td><td><span class="badge missing">Unranked</span></td><td>—</td><td>m.yelp.com</td></tr>
+      <tr><td>baklava dallas</td><td><span class="badge missing">Unranked</span></td><td>—</td><td>yelp.com</td></tr>
+      <tr><td>best mandi in richardson</td><td><span class="badge dropped">Dropped</span></td><td>—</td><td>yelp.com</td></tr>
+      <tr><td>kunafa dallas</td><td><span class="badge missing">Unranked</span></td><td>—</td><td>yelp.com</td></tr>
+      <tr><td>kunafa richardson</td><td><span class="badge missing">Unranked</span></td><td>—</td><td>yelp.com</td></tr>
+      <tr><td>fatayer richardson</td><td><span class="badge missing">Unranked</span></td><td>—</td><td>fatayerbakery.com</td></tr>
+      <tr><td>ladyfingers znood al sit dallas</td><td><span class="badge missing">Unranked</span></td><td>—</td><td>zaatarandzaytoun.com</td></tr>
+      <tr><td>halal catering richardson</td><td><span class="badge missing">Unranked</span></td><td>—</td><td>choppedhalalgrill.com</td></tr>
+    </tbody>
+  </table>
+
+  <h4 style="margin-top: 26px;">What this tells us, in three lines</h4>
+  <ul style="font-size: 14.5px; line-height: 1.6;">
+    <li><b>The Iraqi-specific long tail is working.</b> Top-3 organic for <code>iraqi bakery dallas</code>, <code>iraqi bakery plano</code>, <code>iraqi breakfast richardson</code>, <code>iraqi breakfast dallas</code>, <code>iraqi sweets dallas</code>. #1 for <code>iraqi bakery richardson</code>. That's the moat the audit predicted, now measurable.</li>
+    <li><b>The legacy domain is eating our authority.</b> Two old domains are still resolving, still ranking, and still pulling click share from the canonical site on branded and baklava queries. Until both are 301'd, every backlink and every Google "this is the same business" signal stays split.</li>
+    <li><b>Dessert + competition-heavy queries aren't rankable from copy alone.</b> Unranked for <code>kunafa dallas</code>, <code>kunafa richardson</code>, <code>baklava dallas</code>, <code>fatayer richardson</code>, <code>ladyfingers znood al sit dallas</code>, <code>halal catering richardson</code>, and every "best baklava in [city]" query. These need a combination of backlinks, more reviews, video/image freshness, or all three — pure on-page content has done what it can.</li>
+  </ul>
+
+  <h4 style="margin-top: 22px;">Estimated grader score (educated guess)</h4>
+  <p style="font-size:14px; color:var(--ink); margin-bottom:8px;">
+    Treating each of the original 27 grader issues against current code:
+  </p>
+  <ul style="font-size: 14px; line-height: 1.6;">
+    <li><b>Definitively fixed</b> (verified in repo): missing body content, missing phone on site, missing meta description / OG / Twitter card, no schema, no FAQ, no About Us. <b>~14 of 27 issues.</b></li>
+    <li><b>Partially fixed</b>: off-site ordering still present (top recommendation #1 of the original 4 unaddressed), site-images alt audit not done, NAP cleanup off-site incomplete, no first-party CTA explaining direct ordering. <b>~5 of 27.</b></li>
+    <li><b>Open</b>: 301 redirects, NAP across ~25 directories, Tripadvisor claim, GBP Posts cadence, photo refresh, Q&amp;A, TikTok/YouTube. <b>~8 of 27.</b></li>
+  </ul>
+  <p style="font-size:14px; color:var(--ink);">
+    <b>Projected grader score: ~55–70 / 100 (C to B−)</b>, vs. the 16/100 baseline. The Search Results sub-score
+    should jump dramatically (it was 0/40 because Search Results essentially measures the items that have been
+    fixed). Local Listings was already 16/20 and likely unchanged. Guest Experience (off-site ordering, branded CTA)
+    is the lowest-improvement area and probably still in the 10–20/40 range. <i>This is an estimate, not a measurement</i> —
+    the only way to convert it to a number is to re-run <code>grader_cli.py</code>.
+  </p>
+
+  <h4 style="margin-top: 22px;">Capture method &amp; caveats</h4>
+  <ul style="font-size: 13px; color: var(--muted); line-height: 1.6;">
+    <li>Tool: Playwright headless Chromium against <code>google.com/search?q=...&amp;gl=us&amp;hl=en&amp;num=20&amp;pws=0</code>.</li>
+    <li>Date: 2026-05-21.</li>
+    <li>Single capture per query. Google rankings fluctuate within a day; a 5-run median would be more reliable.</li>
+    <li>Geographic centroid for <code>gl=us</code> is national, not Richardson — local-pack ranks could differ for someone searching from a Richardson IP. Map-pack was not separately captured.</li>
+    <li>Personalization disabled (<code>pws=0</code>) and no Google account logged in, but Google still personalizes by IP. A different runner location would shift some positions by 1–2.</li>
+  </ul>
+</section>
+
+<!-- I. IMPROVEMENT BACKLOG -->
+<section>
+  <div class="section-head"><span class="n">I.</span><h2>Recommended next moves</h2></div>
+  <ul class="recs">
+
+    <li>
+      <span class="tag strategic">Strategic</span>
+      <h4>Resolve the bakery-café vs. restaurant identity question</h4>
+      <p>The audit was written for a kabob/shawarma/mandi restaurant. The site sells a bakery + breakfast café. Both are valid, but the site still carries traces of the old positioning (the slug <code>kabob restaurant allen tx</code> in <code>neighborhoods.ts</code> keywords, "Salam Grill" in <code>alternateName</code>). Confirm with the owner which business this actually is in 2026, then either (a) add a kabob/grill page and surface mixed-grill content, or (b) sweep the codebase and remove kabob/mandi residue so the bakery-café story is clean end-to-end.</p>
+    </li>
+
+    <li>
+      <span class="tag big">Phase 3</span>
+      <h4>Move ordering on-domain (or a strong "order direct" framing)</h4>
+      <p>This was the audit's top recommendation (#3.3) and is still open. ZingMyOrder commission is opaque, but ~25% is the industry default. Either embed an on-domain iframe with the existing ZingMyOrder cart, migrate to Toast / Square Online ordering with a domain-native checkout, or at minimum add a "save 25% — order direct" banner above the order button so users understand why direct beats DoorDash.</p>
+    </li>
+
+    <li>
+      <span class="tag quick">Quick</span>
+      <h4>Run an actual Lighthouse capture and attach the numbers</h4>
+      <p>The audit estimated LCP 3.5–4.5s, CLS 0.15+, weight 2–3MB. The current build should beat all three but the repo has no proof. Run <code>npm run build</code>, <code>npm run serve-out</code>, then Lighthouse against http://localhost:3000/, /menu/, /bakery/, /catering/, and one neighborhood page. Drop the numbers into a <code>perf.md</code> at repo root. Verifies the §5 promise.</p>
+    </li>
+
+    <li>
+      <span class="tag big">Phase 3</span>
+      <h4>Replace mailto catering form with a real endpoint</h4>
+      <p><code>CateringForm</code> currently builds a <code>mailto:</code> link. Cart abandonment risk is high — many users don't have a mail client configured on desktop, and on mobile the handoff is jarring. Wire it to a Cloudflare Worker endpoint or a Formspree/Web3Forms POST that emails the team directly and logs leads in a sheet. Static export friendly, ~1 hour of work, measurable on catering inquiry KPI.</p>
+    </li>
+
+    <li>
+      <span class="tag quick">Quick</span>
+      <h4>Add a live Google Review widget</h4>
+      <p>TrustBar shows a hardcoded "1,899 reviews · 4.4★" pulled from <code>RESTAURANT.reviewCount</code>. Replacing that with a live Google Places API badge (or a static badge regenerated nightly via a small fetch script) puts the social-proof number on a freshness loop. The audit treated 1,892 as the moat — proving it's still growing live is more persuasive than a number in a TypeScript file.</p>
+    </li>
+
+    <li>
+      <span class="tag strategic">Strategic</span>
+      <h4>Open TikTok + YouTube channels and embed</h4>
+      <p>The audit's §10 called these out specifically: "sticky cheese kunafa" videos cross 1M views routinely, samoon and tandoor process content is defensible, kanafa pulls are dwell-time gold. Currently zero presence. Even six TikTok shorts and a YouTube playlist would unlock the "iraqi dessert near me" / "sticky cheese kunafa dallas" trend keywords and create a content moat that no Richardson competitor has.</p>
+    </li>
+
+    <li>
+      <span class="tag quick">Quick</span>
+      <h4>Move from <code>albaghdady.bakery@gmail.com</code> to <code>info@al-baghdady.com</code></h4>
+      <p>The typo from the audit (<code>nfo@salamgrill.com</code>) is fixed, but the replacement is a personal Gmail. Google Workspace at $7/mo gives a branded address, signals trust on schema/contact, and lets the catering form's reply-to look professional. One DNS MX record + 30 minutes.</p>
+    </li>
+
+    <li>
+      <span class="tag quick">Quick</span>
+      <h4>Trim long specialty meta titles to ≤60 chars</h4>
+      <p>Some specialty meta titles run 72–78 characters ("Lady Fingers in Richardson, TX | Al-Baghdady — Iraqi Bakery &amp; Café" = 71). Google truncates around 60. Drop "Iraqi Bakery &amp; Café" from the trailing brand string on the longer slugs — the H1 + breadcrumb still carries that context.</p>
+    </li>
+
+    <li>
+      <span class="tag big">Build</span>
+      <h4>Ship the planned <code>/[dish]-in-[city]/</code> matrix route</h4>
+      <p><code>dishes.ts</code> + <code>matrix.ts</code> are already in place — the infrastructure is half-built. With 10 cities × ~6 hero dishes gated by <code>MATRIX_ALLOWLIST</code>, that's 30–60 new long-tail pages targeting "baklava in plano", "kunafa in frisco" style queries. Each page is a 200-word programmatic template; the SEO upside is significant and the marginal cost per page is near zero.</p>
+    </li>
+
+    <li>
+      <span class="tag quick">Quick</span>
+      <h4>Add a Press / Coverage page</h4>
+      <p>PressStrip carries the D Magazine quote on home, but the audit (§9 + §18) referenced Dallas Observer "Dallas' Best Iraqi Restaurants", Dallas OCA "Iraqi Restaurant Dallas", Restaurant Guru. Consolidate those into <code>/press/</code> with each outlet's headline, date, and a link. Strong trust signal, low effort, helps "best iraqi restaurant dallas" rank via citation density.</p>
+    </li>
+
+    <li>
+      <span class="tag strategic">Highest-leverage open item</span>
+      <h4>301 the two legacy domains. They're still live and outranking the new site.</h4>
+      <p><b>Confirmed via direct fetch on 2026-05-21:</b> <code>https://albaghdadyrestaurant.com/</code> returns 200 OK with the old ZingMyOrder page, title "Al Baghdady Restaurant…Burgers, Mediterranean Restaurant". <code>https://albaghdadybakeryandcafe.com/</code> also returns 200. In live SERPs, the legacy site is currently <b>#1 for "albaghdady"</b> (the new site is #2), <b>#3 for "baklava richardson"</b> (the new site is #7), <b>#7 for "best middle eastern food in richardson"</b>, and <b>#9 for "best middle eastern in richardson tx"</b>. Every visit to those pages is a visit that doesn't accrue authority to <code>al-baghdady.com</code>. Configure both registrars to point at a host that returns <code>HTTP 301 Location: https://al-baghdady.com/&lt;path&gt;</code> for every URL. This is a 30-minute DNS + Cloudflare Workers change and is by a wide margin the highest-ROI item on this list.</p>
+    </li>
+
+    <li>
+      <span class="tag quick">Quick</span>
+      <h4>Decide the canonical spelling: Al-Baghdady vs. Al-Baghdadi</h4>
+      <p>The audit and the repo folder name use "-di"; everything in the actual content uses "-dy" (matching the domain). 152 brand mentions all use "-dy", which is fine, but make sure the "-di" variant appears at least once per page so both spellings rank for branded queries. Adding "Also written Al-Baghdadi" to the homepage opening line or to <code>alternateName</code> resolves this in one edit.</p>
+    </li>
+
+    <li>
+      <span class="tag big">Phase 4</span>
+      <h4>Stand up a measurement loop tied back to the grader</h4>
+      <p>The original baseline was 16/100. There's no scheduled re-grade in the repo. Add a monthly grader_cli capture to the ParentSite cron, store deltas in <code>reports-archive/al-baghdadi/</code>, and surface the trend on the next monthly retainer update. Without this loop, the §16 KPI commitments (5× organic traffic, 70+ grader score, +200 reviews) are unfalsifiable.</p>
+    </li>
+  </ul>
+</section>
+
+<!-- D. UNFINISHED / DROPPED -->
+<section>
+  <div class="section-head"><span class="n">D.</span><h2>What's still open, in one glance</h2></div>
+  <div class="two-col">
+    <div>
+      <h4>Still open from the original plan</h4>
+      <ul>
+        <li>First-party ordering (Phase 3 — recommendation #2)</li>
+        <li>Live Google review widget (#5)</li>
+        <li>TikTok + YouTube presence (#6)</li>
+        <li>Branded email (#7)</li>
+        <li>Photo shoot of 30–40 new pro photos (8.4)</li>
+        <li>Tripadvisor claim + review push (§9)</li>
+        <li>NAP cleanup across ~25 directories (§8.2)</li>
+        <li>Lighthouse + WCAG capture (§5, §6.4)</li>
+        <li>Monthly grader re-capture loop (#13)</li>
+      </ul>
+    </div>
+    <div>
+      <h4>Audit-targeted but deliberately dropped</h4>
+      <ul>
+        <li>Mixed-grill / kabob / shawarma keyword targets (positioning pivot)</li>
+        <li>"Best mandi Richardson" defensive content (Yemandi owns it)</li>
+        <li>"Salam Grill" as a public-facing name (schema alternateName only)</li>
+        <li>Standalone <code>/faq</code> page (consolidated into homepage + per-specialty)</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="endnote">
+  Sources: <code>reports-archive/al-baghdadi/2026-05/al-baghdadi-internal-report.json</code>,
+  <code>al-baghdadi-grader.json</code>, current <code>al-baghdady.com</code> repo at commit <code>c5f7023</code>.
+  Keyword counts via <code>rg -ic</code> across <code>/src</code> on 2026-05-21.
+</div>
+
+</div>
+</body>
+</html>

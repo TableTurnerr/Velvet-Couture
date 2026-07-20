@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Al-Baghdady — Site Architecture & SEO Page Plan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --maroon:#8B1A1A; --maroon-deep:#6f1414; --gold:#C9A84C; --gold-dark:#a8862f;
+    --cream:#FBF7EF; --sand:#F3E9D7; --card:#ffffff; --ink:#241a14; --muted:#7a6c5d;
+    --line:#e7dcc8; --shadow:0 18px 48px -24px rgba(40,26,16,.45);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Inter,system-ui,sans-serif;color:var(--ink);background:
+    radial-gradient(1200px 600px at 80% -10%, #fff6e6 0%, transparent 60%),
+    linear-gradient(180deg,#fdfaf3,#f6efe1);min-height:100vh;padding:48px 24px 80px;line-height:1.5}
+  .wrap{max-width:1080px;margin:0 auto}
+  h1,h2,h3{font-family:Fraunces,Georgia,serif;font-weight:600;letter-spacing:-.01em}
+  .eyebrow{font-size:11px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--gold-dark)}
+  /* Header */
+  header.hero{text-align:center;margin-bottom:40px}
+  header.hero h1{font-size:clamp(28px,4vw,44px);color:var(--maroon);margin:10px 0 8px}
+  header.hero p{color:var(--muted);max-width:620px;margin:0 auto;font-size:15px}
+  .brandbar{display:inline-flex;align-items:center;gap:10px;padding:7px 16px;border-radius:999px;
+    background:var(--maroon);color:#fff;font-weight:600;font-size:13px;letter-spacing:.04em}
+  .brandbar .dot{width:8px;height:8px;border-radius:50%;background:var(--gold)}
+  /* Stats */
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:36px 0 48px}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;text-align:center;box-shadow:var(--shadow)}
+  .stat .num{font-family:Fraunces,serif;font-size:40px;font-weight:700;color:var(--maroon);line-height:1}
+  .stat .lbl{font-size:12.5px;color:var(--muted);margin-top:8px;font-weight:500}
+  .stat.gold .num{color:var(--gold-dark)}
+  /* Section */
+  section.block{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:30px;margin-bottom:32px;box-shadow:var(--shadow)}
+  section.block > h2{font-size:24px;color:var(--maroon);margin:6px 0 4px}
+  section.block > .sub{color:var(--muted);font-size:14px;margin-bottom:24px}
+  /* Tree */
+  .tree{display:flex;flex-direction:column;gap:0}
+  .node{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:10px;font-size:13.5px;font-weight:500}
+  .node.root{background:var(--maroon);color:#fff;font-weight:600;align-self:flex-start;font-size:15px}
+  .branch{margin-left:26px;border-left:2px solid var(--line);padding-left:22px;margin-top:10px;display:flex;flex-direction:column;gap:10px}
+  .leaf{background:var(--sand);color:var(--ink);align-self:flex-start;border:1px solid var(--line)}
+  .leaf.hub{background:#fff;border:1.5px solid var(--gold);color:var(--gold-dark);font-weight:600}
+  .children{margin-left:22px;border-left:2px dashed #e0d3ba;padding-left:18px;margin-top:8px;display:flex;flex-wrap:wrap;gap:7px}
+  .pill{font-size:12px;padding:5px 11px;border-radius:999px;background:#fff;border:1px solid var(--line);color:var(--muted)}
+  .pill.city{border-color:#e3c9c9;color:var(--maroon)}
+  .pill.topic{border-color:#ecdcae;color:var(--gold-dark)}
+  /* Mesh */
+  #mesh-wrap{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:0;min-height:520px}
+  #mesh-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
+  .mesh-line{fill:none;stroke:var(--gold);stroke-width:1;opacity:.28}
+  .mesh-col{display:flex;flex-direction:column;justify-content:center;gap:12px;z-index:2;position:relative}
+  .mesh-col.left{align-items:flex-start}
+  .mesh-col.right{align-items:flex-end}
+  .mesh-col h3{font-size:13px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:6px}
+  .city-node,.dish-node{padding:9px 16px;border-radius:10px;font-size:13.5px;font-weight:600;box-shadow:0 6px 16px -10px rgba(40,26,16,.5)}
+  .city-node{background:#fff;border:1.5px solid var(--maroon);color:var(--maroon)}
+  .dish-node{background:var(--maroon);color:#fff}
+  .mesh-mid{position:absolute;left:50%;top:14px;transform:translateX(-50%);z-index:3;background:var(--gold);color:#3a2c08;
+    font-weight:700;font-size:12px;padding:6px 14px;border-radius:999px;box-shadow:var(--shadow)}
+  /* Matrix grid */
+  .matrix{overflow-x:auto;border-radius:14px;border:1px solid var(--line)}
+  table{border-collapse:collapse;width:100%;font-size:12px}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;white-space:nowrap}
+  thead th{background:var(--maroon);color:#fff;font-weight:600;position:sticky;top:0}
+  tbody th{background:var(--sand);color:var(--maroon);font-weight:600}
+  td{color:var(--muted)}
+  td .ex{color:var(--ink);font-weight:500}
+  caption{caption-side:bottom;color:var(--muted);font-size:12px;padding-top:10px;text-align:left}
+  /* Legend */
+  .legend{display:flex;gap:20px;flex-wrap:wrap;margin-top:18px;font-size:12.5px;color:var(--muted)}
+  .legend span{display:inline-flex;align-items:center;gap:7px}
+  .sw{width:14px;height:14px;border-radius:4px;display:inline-block}
+  footer{text-align:center;color:var(--muted);font-size:12px;margin-top:30px}
+  @media(max-width:720px){.stats{grid-template-columns:1fr}#mesh-wrap{min-height:420px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <span class="brandbar"><span class="dot"></span>Al-Baghdady Restaurant &amp; Bakery</span>
+    <h1>Site Architecture &amp; SEO Page Plan</h1>
+    <p>How the website is structured today, and the city&nbsp;&times;&nbsp;dish page mesh that scales our local search coverage across Dallas&ndash;Fort Worth.</p>
+  </header>
+
+  <div class="stats">
+    <div class="stat"><div class="num">31</div><div class="lbl">Live pages today</div></div>
+    <div class="stat gold"><div class="num">+70</div><div class="lbl">City &times; dish mesh pages (planned)</div></div>
+    <div class="stat"><div class="num">100+</div><div class="lbl">Total page footprint at full mesh</div></div>
+  </div>
+
+  <!-- CURRENT SITE MAP -->
+  <section class="block">
+    <div class="eyebrow">Live Today</div>
+    <h2>Current Site Map</h2>
+    <div class="sub">Every page below is built, indexed-ready, and carries its own metadata, schema and internal links.</div>
+    <div class="tree">
+      <span class="node root">Home&nbsp;&nbsp;/</span>
+      <div class="branch">
+        <span class="node leaf">Menu &nbsp;/menu/</span>
+        <span class="node leaf">Bakery &nbsp;/bakery/</span>
+        <span class="node leaf">Catering &nbsp;/catering/</span>
+        <span class="node leaf">Iraqi Cuisine &nbsp;/iraqi-cuisine/</span>
+        <span class="node leaf">Our Story &nbsp;/our-story/</span>
+        <span class="node leaf">Return Policy &nbsp;/return-policy/</span>
+        <div>
+          <span class="node leaf hub">Service Areas &nbsp;/near/ &nbsp;· 10 cities</span>
+          <div class="children" id="tree-cities"></div>
+        </div>
+        <div>
+          <span class="node leaf hub">Specialties &nbsp;/specialties/ &nbsp;· 11 topics</span>
+          <div class="children" id="tree-topics"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MESH GRAPH -->
+  <section class="block">
+    <div class="eyebrow">The Growth Engine</div>
+    <h2>City &times; Dish Mesh</h2>
+    <div class="sub">Every city links to every signature dish &mdash; a fully-meshed set of dedicated pages like &ldquo;Baklava in Plano&rdquo; or &ldquo;Kunafa in Garland.&rdquo; Add a city, it extends across all dishes; add a dish, it extends across all cities.</div>
+    <div id="mesh-wrap">
+      <div class="mesh-mid">10 &times; 7 = 70 pages</div>
+      <svg id="mesh-svg" preserveAspectRatio="none"></svg>
+      <div class="mesh-col left">
+        <h3>Cities / Regions</h3>
+        <div id="mesh-cities" style="display:flex;flex-direction:column;gap:12px"></div>
+      </div>
+      <div class="mesh-col right">
+        <h3>Signature Dishes</h3>
+        <div id="mesh-dishes" style="display:flex;flex-direction:column;gap:12px;align-items:flex-end"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MATRIX -->
+  <section class="block">
+    <div class="eyebrow">The Output</div>
+    <h2>The 70 Correlated Pages</h2>
+    <div class="sub">Each cell is one dedicated, uniquely-written landing page targeting that dish in that city.</div>
+    <div class="matrix">
+      <table id="matrix-table"></table>
+    </div>
+    <div class="legend">
+      <span><span class="sw" style="background:var(--maroon)"></span> Live page</span>
+      <span><span class="sw" style="background:var(--gold)"></span> Planned mesh page</span>
+      <span><span class="sw" style="background:var(--sand)"></span> Hub / index</span>
+    </div>
+  </section>
+
+  <footer>Al-Baghdady Restaurant &amp; Bakery · al-baghdady.com · architecture overview</footer>
+</div>
+
+<script>
+  const CITIES = ["Plano","Garland","Addison","North Dallas","Allen","McKinney","Far North Dallas","Irving","Carrollton","Frisco"];
+  const DISHES = ["Baklava","Kanafa","Kahi & Qeimar","Mabrouma","Samoon","Manakish","Fatayer"];
+  const TOPICS = ["Bread","Chai","Burma","Lady Fingers","Samosa","Kunafa","Baklava","Breakfast","Manakish","Fatayer","Halal Food"];
+
+  // Tree pills
+  document.getElementById('tree-cities').innerHTML = CITIES.map(c=>`<span class="pill city">${c}</span>`).join('');
+  document.getElementById('tree-topics').innerHTML = TOPICS.map(t=>`<span class="pill topic">${t}</span>`).join('');
+
+  // Mesh nodes
+  document.getElementById('mesh-cities').innerHTML = CITIES.map(c=>`<span class="city-node">${c}</span>`).join('');
+  document.getElementById('mesh-dishes').innerHTML = DISHES.map(d=>`<span class="dish-node">${d}</span>`).join('');
+
+  // Matrix table
+  let html = '<thead><tr><th>City \\ Dish</th>' + DISHES.map(d=>`<th>${d}</th>`).join('') + '</tr></thead><tbody>';
+  CITIES.forEach(c=>{
+    html += `<tr><th>${c}</th>` + DISHES.map(d=>`<td><span class="ex">${d}</span> in ${c}</td>`).join('') + '</tr>';
+  });
+  html += '</tbody><caption>Pattern: /[dish]-in-[city]/ &nbsp;·&nbsp; e.g. /baklava-in-plano/</caption>';
+  document.getElementById('matrix-table').innerHTML = html;
+
+  // Mesh connector lines
+  function drawMesh(){
+    const wrap = document.getElementById('mesh-wrap');
+    const svg = document.getElementById('mesh-svg');
+    const cityNodes = [...document.querySelectorAll('.city-node')];
+    const dishNodes = [...document.querySelectorAll('.dish-node')];
+    const wb = wrap.getBoundingClientRect();
+    let paths = '';
+    cityNodes.forEach(c=>{
+      const cb = c.getBoundingClientRect();
+      const x1 = cb.right - wb.left, y1 = cb.top - wb.top + cb.height/2;
+      dishNodes.forEach(d=>{
+        const db = d.getBoundingClientRect();
+        const x2 = db.left - wb.left, y2 = db.top - wb.top + db.height/2;
+        const mx = (x1 + x2)/2;
+        paths += `<path class="mesh-line" d="M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}"/>`;
+      });
+    });
+    svg.innerHTML = paths;
+  }
+  window.addEventListener('load', drawMesh);
+  window.addEventListener('resize', drawMesh);
+  setTimeout(drawMesh, 300); // after fonts settle
+</script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+{
+  "name": "Velvet Couture Medspa",
+  "short_name": "Velvet Medspa",
+  "version": "1.0.0",
+  "description": "Aesthetics and wellness clinical boutique in Houston Heights.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FAFAF7",
+  "theme_color": "#8B1A1A",
+  "icons": [
+    {
+      "src": "/favicon-192.webp",
+      "sizes": "192x192",
+      "type": "image/webp"
+    },
+    {
+      "src": "/favicon-512.webp",
+      "sizes": "512x512",
+      "type": "image/webp"
+    }
+  ]
+}
